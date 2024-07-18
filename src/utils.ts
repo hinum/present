@@ -1,4 +1,4 @@
-import { Comp,Vec2 } from "kaplay";
+import { PosComp,Vec2 } from "kaplay";
 import { k } from "./main";
 
 type allowedKey = string | number | symbol
@@ -42,7 +42,7 @@ function updateDynamics(state: DynamicState, constants: DynamicConst): DynamicSt
   }
 }
 
-export type SmoothMove = Comp & {
+export type SmoothMove = PosComp & {
   target: Vec2
   state: {
     x: DynamicState
@@ -58,26 +58,23 @@ export type SmoothMove = Comp & {
   smoothByV(vec2: Vec2): void
 }
 
-export const smoothMove = (damp: number, speed: number): SmoothMove=>({
+export const smoothMove = (x:number, y: number, damp: number, speed: number): SmoothMove=>({
   id: "smoothMove",
 
   constants: calculateConst(damp, speed),
   state: {
     x: {
-      value: 0,
+      value: x,
       Dvalue: 0,
-      target: 0
+      target: x
     },
     y: {
-      value: 0,
+      value: y,
       Dvalue: 0,
-      target: 0
+      target: y
     }
   },
-
-  add(){ 
-    this.teleportToV(this.pos)
-  },
+  
   update(){ 
     this.state.x.value = this.pos.x
     this.state.y.value = this.pos.y
@@ -113,4 +110,6 @@ export const smoothMove = (damp: number, speed: number): SmoothMove=>({
     this.target = vec
     this.moveTo(vec)
   },
+
+  ...k.pos(x,y)
 })

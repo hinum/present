@@ -1,3 +1,4 @@
+import { k } from "./main";
+
 function createSpawner(){}
-function createCircle(){}
 function createMask(){}

@@ -17,11 +17,8 @@ interface StateChange{
   next(): StateChange
 }
 
-async function scene1_title(): Promise<StateChange> {
-  const initChange = {
-    next(){ return initChange }, //TODO
-    prev(){ return initChange }
-  }
+const titleCloud1 = k.add([])
 
-  return initChange
+async function scene1_title() {
+
 }
