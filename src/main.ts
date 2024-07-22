@@ -1,6 +1,6 @@
 import kaboom, { Vec2 } from "kaplay"
 import { Color } from "kaplay/dist/declaration/math"
-import { promisify, smoothMove } from "./utils"
+import { calculateConst, promisify, smoothMove } from "./utils"
 
 const WIDTH = 100
 const ASPECT_RATIO = (16 / 9)
@@ -10,21 +10,6 @@ export const k = kaboom({
   height: WIDTH * (1 / ASPECT_RATIO),
   scale: innerWidth / WIDTH,
 })
-
-const waveParam = Array(4).fill(0).map(()=>[k.rand(0.4,0.8), k.rand(1,4), k.rand(1,4)])
-//const waveHieghtAt = (x: number)=>(waveParam.reduce((pv, [a,w,p])=>pv + a * Math.sin(x * w + k.time() * p),0) * 0.1 + 0.6) * k.height()
-//const dyWaveAt = (x: number)=>(waveParam.reduce((pv, [a,w,p])=>pv + a * Math.cos(x * w + k.time() * p),0) * 0.1 + 0.6) * k.height()
-
-k.loadShader("waves", undefined, `
-uniform float u_time;
-
-vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
-  float waveHeight = ${waveParam.map(([a,w,p])=>`${a.toFixed(2)} * sin(uv.x * ${w.toFixed(2)} + u_time * ${p.toFixed(2)})`).join(" + ")};
-  float opacity = step( uv.y * 2.0, waveHeight * 0.75 + 1.0);
-
-  return vec4(color.x, color.y, color.z, opacity);
-}
-`)
 
 const damp = 2
 const speed = 0.5
@@ -118,8 +103,8 @@ async function main(){
 
   await awaitNext()
 
-  cloudLeft.smoothBy( -40, 0 )
-  cloudRight.smoothBy( 40, 0 )
+  cloudLeft.smoothBy( -60, 0 )
+  cloudRight.smoothBy( 60, 0 )
 
   await k.wait(1.5)
 
@@ -128,18 +113,35 @@ async function main(){
   bubbleRight.smoothBy( 40, 0)
 
   const sea = k.add([
-    k.rect(100, 10),
+    k.rect(100, 100),
     k.color(k.BLACK),
-    k.anchor("botleft"),
-    smoothMove(0, k.height() + 10, damp, speed)
+    smoothMove(0, k.height(), damp, speed)
   ])
-  cloudLeft.teleportTo( -20,40)
+  const boat = k.add([
+    k.rect(15,10),
+    k.color(k.BLACK),
+    smoothMove(60, k.height(), 0.4, speed)
+  ])
+  cloudLeft.teleportTo( -20,10)
   cloudRight.teleportTo( 120,30)
 
   await k.wait(1)
   sea.smoothBy( 0, -10 )
   cloudLeft.smoothBy( 40, 0)
   cloudRight.smoothBy(-40, 0)
+
+  await k.wait(1.5)
+  boat.smoothBy(0,-16)
+
+  await awaitNext()
+  boat.constants = calculateConst(1, 0.1)
+  boat.smoothBy(0, 30)
+
+  await k.wait(1.5)
+  sea.constants = calculateConst(1, 0.2)
+  sea.smoothBy(0,-70)
+  cloudLeft.smoothBy(0,-70)
+  cloudRight.smoothBy(0,-70)
 
 }
 main()

@@ -23,7 +23,7 @@ type DynamicConst = {
   c2: number
 }
 
-const calculateConst = (damp: number, speed: number): DynamicConst=>({
+export const calculateConst = (damp: number, speed: number): DynamicConst=>({
   c1 : damp / (Math.PI * speed),
   c2 : 1 / (2 * Math.PI * speed) ** 2
 })
