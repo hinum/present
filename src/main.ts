@@ -240,7 +240,7 @@ async function main(){
   sun.smoothBy( 25,0)
   name.color = mocha.text
   name.textSize = 3
-  name.text = "thanks for\n listening"
+  name.text = "thanks for\nlistening"
 
   cloudLeft.teleportTo(20, 60)
   cloudRight.teleportTo(90, 60)
