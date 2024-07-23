@@ -42,11 +42,7 @@ function updateDynamics(state: DynamicState, constants: DynamicConst): DynamicSt
   }
 }
 
-<<<<<<< HEAD
-export type SmoothMove = PosComp & {
-=======
 export type SmoothMoveComp = PosComp & {
->>>>>>> e7f6b0ed38be128862a335e2b23059f0c99fe249
   target: Vec2
   state: {
     x: DynamicState
@@ -61,12 +57,7 @@ export type SmoothMoveComp = PosComp & {
   smoothToV(vec2: Vec2): void
   smoothByV(vec2: Vec2): void
 }
-
-<<<<<<< HEAD
-export const smoothMove = (x:number, y: number, damp: number, speed: number): SmoothMove=>({
-=======
 export const smoothMove = (x:number, y:number, damp: number, speed: number): SmoothMoveComp=>({
->>>>>>> e7f6b0ed38be128862a335e2b23059f0c99fe249
   id: "smoothMove",
 
   constants: calculateConst(damp, speed),
@@ -82,11 +73,6 @@ export const smoothMove = (x:number, y:number, damp: number, speed: number): Smo
       target: y
     }
   },
-<<<<<<< HEAD
-  
-=======
-
->>>>>>> e7f6b0ed38be128862a335e2b23059f0c99fe249
   update(){ 
     this.state.x.value = this.pos.x
     this.state.y.value = this.pos.y
