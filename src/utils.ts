@@ -7,7 +7,7 @@ export const fromEntries = <K extends allowedKey,T>(arr: [K,T][])=>Object.entrie
 export const keys = <K extends allowedKey>(obj: Record<K, unknown>)=>Object.keys(obj) as K[]
 export const values = <T>(obj: Record<any, T>)=>Object.values(obj) as T[]
 
-export const promisify = <T>(fn: (handler: (e: T)=>void)=>unknown)=>new Promise<T>(fn)
+export const promisify = <T = void>(fn: (handler: (e: T)=>void)=>unknown)=>()=>new Promise<T>(res=>fn(res))
 export function print<T>(inp: T){
   console.log(inp)
   return inp
@@ -23,7 +23,7 @@ type DynamicConst = {
   c2: number
 }
 
-const calculateConst = (damp: number, speed: number): DynamicConst=>({
+export const calculateConst = (damp: number, speed: number): DynamicConst=>({
   c1 : damp / (Math.PI * speed),
   c2 : 1 / (2 * Math.PI * speed) ** 2
 })
@@ -42,7 +42,11 @@ function updateDynamics(state: DynamicState, constants: DynamicConst): DynamicSt
   }
 }
 
+<<<<<<< HEAD
 export type SmoothMove = PosComp & {
+=======
+export type SmoothMoveComp = PosComp & {
+>>>>>>> e7f6b0ed38be128862a335e2b23059f0c99fe249
   target: Vec2
   state: {
     x: DynamicState
@@ -58,7 +62,11 @@ export type SmoothMove = PosComp & {
   smoothByV(vec2: Vec2): void
 }
 
+<<<<<<< HEAD
 export const smoothMove = (x:number, y: number, damp: number, speed: number): SmoothMove=>({
+=======
+export const smoothMove = (x:number, y:number, damp: number, speed: number): SmoothMoveComp=>({
+>>>>>>> e7f6b0ed38be128862a335e2b23059f0c99fe249
   id: "smoothMove",
 
   constants: calculateConst(damp, speed),
@@ -74,7 +82,11 @@ export const smoothMove = (x:number, y: number, damp: number, speed: number): Sm
       target: y
     }
   },
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> e7f6b0ed38be128862a335e2b23059f0c99fe249
   update(){ 
     this.state.x.value = this.pos.x
     this.state.y.value = this.pos.y

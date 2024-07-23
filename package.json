@@ -11,6 +11,7 @@
 		"typescript": "^5.5.3"
 	},
 	"dependencies": {
+		"@catppuccin/palette": "^1.2.0",
 		"kaplay": "^3001.0.0-alpha.17"
 	}
 }
