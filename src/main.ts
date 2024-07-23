@@ -4,6 +4,7 @@ import { calculateConst, promisify, smoothMove } from "./utils"
 
 const WIDTH = 100
 const ASPECT_RATIO = (16 / 9)
+const font = ""
 
 export const k = kaboom({
   width: WIDTH,
@@ -24,24 +25,26 @@ const makeClouds = (
     color: Color
   }
 )=>{
-  const body = k.add([ smoothMove(center.x ,center.y, damp, speed) ])
+  const mask = k.add([ smoothMove(center.x, center.y, damp, speed) ])
+  const body = k.add([ k.pos(0,0) ])
 
-  const loop = k.loop(particle.spawnInterval, ()=>body.add([
-    k.pos(-radius, particle.variationY * (Math.random() * 2 - 1)),
+  mask.onUpdate(()=>body.pos.y = mask.pos.y)
+
+  k.loop(particle.spawnInterval, ()=>body.add([
+    k.pos(center.x - radius - 20, particle.variationY * (Math.random() * 2 - 1)),
     k.move(k.RIGHT, particle.speed),
-    k.lifespan((radius * 2) / particle.speed),
+    k.lifespan((radius * 2 + 20) / particle.speed),
     k.color(particle.color),
     k.opacity(1),
     k.circle(0),
   ]))
-  body.onDestroy(()=>loop.cancel())
 
   body.onUpdate(()=>body.children.forEach(child=>{
-    const distanceRatio = 1 - Math.min(child.pos.len(), radius) / radius
+    const distanceRatio = 1 - Math.min(child.pos.sub(mask.pos.x, 0).len(), radius) / radius
     child.radius = k.easings.easeInOutSine(distanceRatio) * particle.radius
   }))
 
-  return body
+  return mask
 }
 const makeBubbleColumn = (
   spawnPoint: Vec2,
@@ -91,12 +94,22 @@ const bubbleLeft = makeBubbleColumn( k.vec2(20, 70), bubbleOpts )
 const bubbleRight= makeBubbleColumn( k.vec2(80, 90), bubbleOpts )
 
 const name = k.add([
-  k.text("name", { size: 6 }),
+  k.text("name", { size: 6, font}),
   k.anchor("center"),
   k.pos(k.center()),
   k.opacity(1),
   k.color(k.BLACK)
 ])
+const nameTopText = k.add([
+  k.text("presenting..", { size: 3, font}),
+  k.anchor("bot"),
+  k.pos(k.center().add(0, 7)),
+  k.opacity(1),
+  k.color(k.BLACK)
+])
+
+name.fadeIn(1)
+k.wait(0.2, ()=>nameTopText.fadeIn(1))
 
 const awaitNext = promisify(k.onClick)
 async function main(){
@@ -109,6 +122,7 @@ async function main(){
   await k.wait(1.5)
 
   name.fadeOut(1)
+  k.wait(0.2, ()=>nameTopText.fadeOut(1))
   bubbleLeft.smoothBy( -40, 0)
   bubbleRight.smoothBy( 40, 0)
 
@@ -118,12 +132,25 @@ async function main(){
     smoothMove(0, k.height(), damp, speed)
   ])
   const boat = k.add([
-    k.rect(15,10),
+    k.rect(10,10),
     k.color(k.BLACK),
     k.rotate(0),
     k.anchor("center"),
     smoothMove(60, k.height() + 5, 0.4, speed)
   ])
+  const paragraph1 = `
+uhhhhhhhhgh
+uhhhhuyh
+yeah :thumbsup:
+`
+  const paragraph = k.add([
+    k.text(paragraph1, { size: 3, font}),
+    k.anchor("botleft"),
+    k.pos(5, k.height()-15),
+    k.opacity(1),
+    k.color(k.BLACK)
+  ])
+
   cloudLeft.teleportTo( -20,10)
   cloudRight.teleportTo( 120,30)
 
@@ -140,15 +167,15 @@ async function main(){
   
   k.tween(0,1, 2, t=>{
     boat.teleportToV(k.lerp( boatLastPos, k.vec2( 60, 70 ), t ))
-    boat.angle = k.lerp(0,80,t)
+    boat.angle = k.lerp(0,90,t)
   }, k.easings.easeInExpo)
   await k.wait(1.5)
 
   await k.wait(1.5)
-  sea.constants = calculateConst(2, 0.2)
+  sea.constants = calculateConst(1.7, 0.2)
   sea.smoothBy(0,-70)
-  cloudLeft.smoothBy(0,-70)
-  cloudRight.smoothBy(0,-70)
+  cloudLeft.smoothBy(-40, 0)
+  cloudRight.smoothBy(40, 0)
 
 }
 main()
