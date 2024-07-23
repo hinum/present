@@ -55,7 +55,7 @@ const makeBubbleColumn = (
   const body = k.add([ smoothMove(spawnPoint.x ,spawnPoint.y, damp, speed) ])
 
   const loop = k.loop(particle.spawnInterval, ()=>body.add([
-    k.lifespan(90 / particle.speed),
+    k.lifespan(110 / particle.speed),
     k.color(particle.color),
     k.circle(particle.radius * k.rand(1, 1.2)),
     k.opacity(1),
@@ -120,7 +120,9 @@ async function main(){
   const boat = k.add([
     k.rect(15,10),
     k.color(k.BLACK),
-    smoothMove(60, k.height(), 0.4, speed)
+    k.rotate(0),
+    k.anchor("center"),
+    smoothMove(60, k.height() + 5, 0.4, speed)
   ])
   cloudLeft.teleportTo( -20,10)
   cloudRight.teleportTo( 120,30)
@@ -134,11 +136,16 @@ async function main(){
   boat.smoothBy(0,-16)
 
   await awaitNext()
-  boat.constants = calculateConst(1, 0.1)
-  boat.smoothBy(0, 30)
+  const boatLastPos = boat.pos.clone()
+  
+  k.tween(0,1, 2, t=>{
+    boat.teleportToV(k.lerp( boatLastPos, k.vec2( 60, 70 ), t ))
+    boat.angle = k.lerp(0,80,t)
+  }, k.easings.easeInExpo)
+  await k.wait(1.5)
 
   await k.wait(1.5)
-  sea.constants = calculateConst(1, 0.2)
+  sea.constants = calculateConst(2, 0.2)
   sea.smoothBy(0,-70)
   cloudLeft.smoothBy(0,-70)
   cloudRight.smoothBy(0,-70)
